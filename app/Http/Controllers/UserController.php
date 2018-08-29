@@ -2,74 +2,57 @@
 
 namespace App\Http\Controllers;
 
+use Firebase\JWT\JWT;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Requests;
-use JWTAuth;
-use Tymon\JWTAuth\JWTGuard;
-use JWTAuthException;
+
 use App\User;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Input;
 
 class UserController extends Controller
 {
-       public function __construct()
+    public function __construct()
     {
         $this->user = new User;
     }
 
-    public function login(Request $request){
+    public function  loginuser(){
 
-        $credentials = $request->only('username', 'password');
+        $currentTime = round(microtime(true));
 
+        $email =  $_POST['email'];
+        $password  =$_POST['password'];
+        $password =  Hash::make($password);
 
+        $userdata = DB::table('users')->select('id','email','phone','username','password')->where('email', $email)->first();
+        if ($userdata && Hash::check(Input::get('password'), $userdata->password)) {
 
-        $token = null;
-        try {
-            if (!$token = JWTAuth::attempt($credentials)) {
+            $key = "chungwa-app-2018-user-login".$email."p".$password;
+            $token =  array(
+                "id" => $userdata->id,
+                "email"=>$userdata->email,
+                "phone"=>$userdata->phone,
+                "username"=>$userdata->username,
+                "seed" => rand(1, 100),
+            );
+            $jwttoken = JWT::encode($token, $key);
+            $decodedPayloadData = JWT::decode($jwttoken, $key, array('HS256'));
 
-                return response()->json([
-                    'response' => 'error',
-                    'token' => 'Invalid Email or Password',
-                ]);
-            }
-        } catch (JWTAuthException $e) {
-            return response()->json([
-                'response' => 'error',
-                'token' => 'failed_to_create_token',
-            ]);
-        }
-        return response()->json([
-            'response' => 'success',
-        
-                'token' => $token,
-            
-        ]);
-    }
-
-        public function getAuthUser(Request $request){
-
-        $user = JWTAuth::toUser($request->token);        
-        return response()->json(['result'=>$user]);
-    }
+            return response()->json([$decodedPayloadData])->header('Content-Type', 'application/plain');
 
 
+        } else {
 
-
-    public function logout(Request $request) 
-    {
-         $token = $request->get("token");
-
-        $response =  JWTAuth::setToken($token)->invalidate();
-
-        if ($response) {
-            
-            return response()->json(['response'=>'true']);
-        }  else {
-
-            return response()->json(['response'=>'false']);
         }
 
+
+
     }
+
+
+
 }
 
 
