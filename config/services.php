@@ -35,4 +35,10 @@ return [
         'secret' => env('STRIPE_SECRET'),
     ],
 
+    'nexmo' => [
+        'key' => '3f59ae15',
+        'secret' => 'Qi6VsvoDXI17HaH2',
+        'sms_from' => 'CHUNGWA App',
+    ],
+
 ];
