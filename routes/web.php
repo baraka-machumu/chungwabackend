@@ -20,6 +20,7 @@ Route::get('/', function () {
 
 Route::resource('user','UserController');
 Route::post('user/login','UserController@store');
+Route::post('user/register', 'UserController@registerUser');
 
 Route::get('list',function(){
 
@@ -47,3 +48,4 @@ Route::get('send/email',function (){
     $user->notify(new SMSNotification());
 
 });
+
