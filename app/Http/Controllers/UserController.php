@@ -50,6 +50,21 @@ class UserController extends Controller
 
 
     }
+    public function registerUser(Request $request)
+    {
+        $user = new User();
+        $email = $request->get('email');
+        $user->email=$email;
+        $success =  $user->save();
+
+        if ($success){
+            return response()->json(['success'=>true]);
+        } else {
+            return response()->json(['success'=>false]);
+
+        }
+
+    }
 
 
 
