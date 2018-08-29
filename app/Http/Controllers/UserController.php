@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Notifications\SmsNotification;
 use Firebase\JWT\JWT;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -56,14 +57,28 @@ class UserController extends Controller
         $email = $request->get('email');
         $user->email=$email;
 
+        $code = $request->get('code');
         $success =  $user->save();
 
         if ($success){
+
+            $this->sendMailExcution($code);
+
             return response()->json(['success'=>true,'massage'=>'Successful Registered'])->header('Content-Type', 'application/json');
         } else {
             return response()->json(['success'=>false,'message'=>'Failed To register'])->header('Content-Type', 'application/json');;
 
         }
+
+    }
+
+
+    public function sendMailExcution($code){
+
+        $user = new User();
+        $user->email= 'barakabryson@gmail.com';
+
+        $user->notify(new SMSNotification($code));
 
     }
 

@@ -21,13 +21,9 @@ Route::get('/', function () {
 Route::resource('user','UserController');
 Route::post('user/login','UserController@store');
 Route::post('user/register', 'UserController@registerUser');
+Route::post('send/email', 'UserController@registerUser');
 
-Route::get('list',function(){
 
-   $list =  [1,1,2,3,4,6,7,8];
-
-    echo $list[$list[5]];
-});
 
 Route::post('user/login','UserController@loginuser');
 
@@ -40,12 +36,5 @@ Route::get('send',function (){
 });
 
 
-Route::get('send/email',function (){
 
-    $user = new User();
-    $user->email= 'barakabryson@gmail.com';   // Don't forget specify country code.
-
-    $user->notify(new SMSNotification());
-
-});
 

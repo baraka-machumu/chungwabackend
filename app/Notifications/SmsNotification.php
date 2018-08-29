@@ -12,14 +12,16 @@ class SmsNotification extends Notification
 {
     use Queueable;
 
+    public $code;
+
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($code)
     {
-        //
+        $this->code = $code;
     }
 
     /**
@@ -41,14 +43,15 @@ class SmsNotification extends Notification
      */
     public function toMail($notifiable)
     {
-        $code  =3900;
+
         return (new MailMessage)
+
                     ->greeting("Email Verification")
                     ->subject('Email Verification')
-
                     ->line('Below is your code copy and paste it in verification code field')
-                    ->action('Code '.$code,'')
+                    ->action('Code '.$this->code,'')
                     ->line('Thank you for using our application!');
+
     }
 
     /**
