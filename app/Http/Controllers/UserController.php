@@ -55,12 +55,13 @@ class UserController extends Controller
         $user = new User();
         $email = $request->get('email');
         $user->email=$email;
+
         $success =  $user->save();
 
         if ($success){
-            return response()->json(['success'=>true]);
+            return response()->json(['success'=>true,'massage'=>'Successful Registered'])->header('Content-Type', 'application/json');
         } else {
-            return response()->json(['success'=>false]);
+            return response()->json(['success'=>false,'message'=>'Failed To register'])->header('Content-Type', 'application/json');;
 
         }
 
