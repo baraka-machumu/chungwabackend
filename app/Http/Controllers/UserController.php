@@ -29,7 +29,7 @@ class UserController extends Controller
         $userdata = DB::table('users')->select('id','email','phone','username','password')->where('email', $email)->first();
         if ($userdata && Hash::check(Input::get('password'), $userdata->password)) {
 
-            $key = "chungwa-app-2018-user-login".$email."p".$password;
+            $key = "chungwa-app-2018-user-loigin".$email."p".$password;
             $token =  array(
                 "id" => $userdata->id,
                 "email"=>$userdata->email,
