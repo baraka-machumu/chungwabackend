@@ -71,8 +71,6 @@ class UserController extends Controller
         }
 
     }
-
-
     public function sendMailExcution($code){
 
         $user = new User();
