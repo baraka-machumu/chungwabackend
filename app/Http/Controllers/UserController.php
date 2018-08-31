@@ -19,32 +19,48 @@ class UserController extends Controller
         $this->user = new User;
     }
 
-    public function  loginuser(){
+    public function  loguser(Request $request){
 
-        $currentTime = round(microtime(true));
-
-        $email =  $_POST['email'];
-        $password  =$_POST['password'];
-        $password =  Hash::make($password);
-
-        $userdata = DB::table('users')->select('id','email','phone','username','password')->where('email', $email)->first();
-        if ($userdata && Hash::check(Input::get('password'), $userdata->password)) {
-
-            $key = "chungwa-app-2018-user-loigin".$email."p".$password;
-            $token =  array(
-                "id" => $userdata->id,
-                "email"=>$userdata->email,
-                "phone"=>$userdata->phone,
-                "username"=>$userdata->username,
-                "seed" => rand(1, 100),
-            );
-            $jwttoken = JWT::encode($token, $key);
-            $decodedPayloadData = JWT::decode($jwttoken, $key, array('HS256'));
-
-            return response()->json([$decodedPayloadData])->header('Content-Type', 'application/plain');
+        $email =  $request->get("email");
+        $password = $request->get("password");
 
 
-        } else {
+        $userdata = DB::table('users')->select('id','email','phone','username','password','is_active')->where('email', $email)->first();
+
+
+         if (!empty($userdata)){
+         if(Hash::check($password, $userdata->password)){
+
+                 $key = "chungwa-app-2018-user-loigin".$email."p".$password;
+                 $token =  array(
+                     "success"=>1,
+                     "message"=>"sucessful logged in",
+                     "id" => $userdata->id,
+                     "email"=>$userdata->email,
+                     "phone"=>$userdata->phone,
+                     "username"=>$userdata->username,
+                     "seed" => rand(1, 100),
+                 );
+
+                 $jwt = JWT::encode($token, $key);
+
+                 $decodedPayloadData = JWT::decode($jwt, $key, array('HS256'));
+                 $array =  (array) $decodedPayloadData;
+                 $array['token']= $jwt;
+
+
+                 return response()->json($array)->header('Content-Type', 'application/json');
+
+
+             } else {
+             return response()->json([ "success"=>0,"message"=>"Bad creadentials email or password"])->header('Content-Type', 'application/json');
+
+         }
+
+         }
+
+        else {
+            return response()->json([ "success"=>0,"message"=>"Bad creadentials email or password"])->header('Content-Type', 'application/json');
 
         }
 
@@ -53,6 +69,7 @@ class UserController extends Controller
     }
     public function registerUser(Request $request)
     {
+
         $user = new User();
         $email = $request->get('email');
         $user->email=$email;
@@ -72,7 +89,6 @@ class UserController extends Controller
 
     }
 
-
     public function sendMailExcution($code){
 
         $user = new User();
@@ -81,7 +97,6 @@ class UserController extends Controller
         $user->notify(new SMSNotification($code));
 
     }
-
 
 
 }
