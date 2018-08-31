@@ -48,8 +48,6 @@ class UserController extends Controller
 
         }
 
-
-
     }
     public function registerUser(Request $request)
     {
@@ -57,7 +55,7 @@ class UserController extends Controller
         $email = $request->get('email');
         $user->email=$email;
 
-        $code = $request->get('code');
+        $code = $request->get('verification_code');
         $success =  $user->save();
 
         if ($success){
@@ -66,7 +64,26 @@ class UserController extends Controller
 
             return response()->json(['success'=>true,'massage'=>'Successful Registered'])->header('Content-Type', 'application/json');
         } else {
-            return response()->json(['success'=>false,'message'=>'Failed To register'])->header('Content-Type', 'application/json');;
+            return response()->json(['success'=>false,'message'=>'Failed To register'])->header('Content-Type', 'application/json');
+
+        }
+
+    }
+
+    public function finalregister(Request $request)
+    {
+        $user = new User([
+        'username' => $request->get('username'),
+        'phone' => $request->get('phone'),
+        'password' => $request->get('password')]);
+
+        $success =  $user->save();
+
+        if ($success){
+
+            return response()->json(['success'=>true,'massage'=>'Successful Registered'])->header('Content-Type', 'application/json');
+        } else {
+            return response()->json(['success'=>false,'message'=>'Failed To register'])->header('Content-Type', 'application/json');
 
         }
 
@@ -74,7 +91,7 @@ class UserController extends Controller
     public function sendMailExcution($code){
 
         $user = new User();
-        $user->email= 'barakabryson@gmail.com';
+        $user->email= 'fettymkima@gmail.com';
 
         $user->notify(new SMSNotification($code));
 
